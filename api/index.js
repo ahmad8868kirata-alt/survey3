@@ -64,6 +64,12 @@ app.use(cookieParser());
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const VIEWS_DIR = path.join(__dirname, '..', 'views');
 
+// Simple Request Logger
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
+});
+
 // Authentication Middleware
 const PROTECTED_PAGES = ['/', '/index.html', '/dashboard.html'];
 const authMiddleware = (req, res, next) => {
@@ -97,8 +103,8 @@ app.get(['/استبيان عمال.html', '/استبيان%20عمال.html'], (r
 app.get(['/استبيان مدراء.html', '/استبيان%20مدراء.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'استبيان مدراء.html')));
 
 // Specific routes for protected views
-app.get('/index.html', authMiddleware, (req, res) => res.sendFile(path.join(VIEWS_DIR, 'index.html')));
-app.get('/dashboard.html', authMiddleware, (req, res) => res.sendFile(path.join(VIEWS_DIR, 'dashboard.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(VIEWS_DIR, 'index.html')));
+app.get('/dashboard.html', (req, res) => res.sendFile(path.join(VIEWS_DIR, 'dashboard.html')));
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -330,28 +336,26 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`=========================================`);
-  console.log(`🚀 SERVER RUNNING`);
-  console.log(`🌍 URL: http://localhost:${PORT}`);
-  console.log(`📪 Receiver (MAIL_TO): ${process.env.MAIL_TO ? redactEmailAddress(process.env.MAIL_TO) : '(not set)'}`);
-  console.log(
-    `✉️  SMTP (SMTP_USER): ${process.env.SMTP_USER ? redactEmailAddress(process.env.SMTP_USER) : '(not set)'}`,
-  );
-  console.log(`=========================================`);
-});
-
 // For Vercel/Single Page Routing: Redirect any unknown GET requests to index.html
 // (Only if they aren't API calls)
 app.get(/^(?!\/api|\/send-email).*/, (req, res) => {
-  // If user is authenticated, serve index.html, else the middleware will handle redirect (if needed)
-  // But here we need to manually check or allow authMiddleware to handle it.
-  // To keep it simple, we redirect to /index.html which is protected.
   if (req.path === '/' || req.path === '/index.html') {
     return res.sendFile(path.join(VIEWS_DIR, 'index.html'));
   }
-  // For anything else not in public, we can just send to index.html as a fallback
   res.sendFile(path.join(VIEWS_DIR, 'index.html'));
 });
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=========================================`);
+    console.log(`🚀 SERVER RUNNING`);
+    console.log(`🌍 URL: http://localhost:${PORT}`);
+    console.log(`📪 Receiver (MAIL_TO): ${process.env.MAIL_TO ? redactEmailAddress(process.env.MAIL_TO) : '(not set)'}`);
+    console.log(
+      `✉️  SMTP (SMTP_USER): ${process.env.SMTP_USER ? redactEmailAddress(process.env.SMTP_USER) : '(not set)'}`,
+    );
+    console.log(`=========================================`);
+  });
+}
 
 module.exports = app;
