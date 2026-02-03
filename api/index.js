@@ -10,6 +10,9 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
+// Unique secret for this server instance (resets on restart)
+const SESSION_SECRET = Date.now().toString(36) + Math.random().toString(36).slice(2);
+
 // Handle DB path for Vercel (must use /tmp for write access)
 const IS_VERCEL = process.env.VERCEL === '1';
 const DB_PATH = IS_VERCEL
@@ -58,20 +61,25 @@ app.use(express.json({ limit: '250kb' }));
 app.use(express.urlencoded({ extended: true, limit: '250kb' }));
 app.use(cookieParser());
 
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+
 // Authentication Middleware
 const PROTECTED_PAGES = ['/', '/index.html', '/dashboard.html'];
 const authMiddleware = (req, res, next) => {
+  const cleanPath = req.path === '/' ? '/index.html' : req.path;
+
   // If it's a protected page, check for auth cookie
-  if (PROTECTED_PAGES.includes(req.path)) {
-    if (req.cookies.auth === 'true') {
+  if (PROTECTED_PAGES.includes(cleanPath)) {
+    if (req.cookies.auth === SESSION_SECRET) {
       return next();
     } else {
       return res.redirect('/login.html');
     }
   }
+
   // If it's an API call to surveys, check for auth cookie
   if (req.path.startsWith('/api/surveys') || (req.path.startsWith('/api/survey') && req.method === 'DELETE')) {
-    if (req.cookies.auth === 'true') {
+    if (req.cookies.auth === SESSION_SECRET) {
       return next();
     } else {
       return res.status(401).json({ status: 'error', message: 'Unauthorized' });
@@ -81,17 +89,17 @@ const authMiddleware = (req, res, next) => {
 };
 
 app.use(authMiddleware);
-app.use(express.static(__dirname));
+app.use(express.static(PUBLIC_DIR));
 
-// Explicitly serve Arabic files to avoid 404 on Vercel
-app.get('/استبيان%20عمال.html', (req, res) => res.sendFile(path.join(__dirname, 'استبيان عمال.html')));
-app.get('/استبيان%20مدراء.html', (req, res) => res.sendFile(path.join(__dirname, 'استبيان مدراء.html')));
+// Explicitly serve Arabic files to avoid encoding issues on Vercel
+app.get(['/استبيان عمال.html', '/استبيان%20عمال.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'استبيان عمال.html')));
+app.get(['/استبيان مدراء.html', '/استبيان%20مدراء.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'استبيان مدراء.html')));
 
-// Login Endpoint
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   if (username === 'admin' && password === 'Admin@2000') {
-    res.cookie('auth', 'true', { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
+    res.cookie('auth', SESSION_SECRET, { httpOnly: true, secure: true, sameSite: 'strict' });
     return res.json({ status: 'success' });
   }
   res.status(401).json({ status: 'error', message: 'Invalid credentials' });
@@ -331,10 +339,8 @@ app.listen(PORT, () => {
 
 // For Vercel/Single Page Routing: Redirect any unknown GET requests to index.html
 // (Only if they aren't API calls)
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api/') && !req.path.startsWith('/send-email')) {
-    res.sendFile(path.join(__dirname, 'index.html'));
-  }
+app.get(/^(?!\/api|\/send-email).*/, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
 module.exports = app;
