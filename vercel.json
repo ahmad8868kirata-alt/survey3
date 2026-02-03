@@ -1,0 +1,31 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "server.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(index.html|dashboard.html|استبيان%20عمال.html|استبيان%20مدراء.html|login.html|logo.png)",
+            "dest": "/$1"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "server.js"
+        },
+        {
+            "src": "/send-email",
+            "dest": "server.js"
+        },
+        {
+            "src": "/",
+            "dest": "server.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
+        }
+    ]
+}

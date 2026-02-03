@@ -1,0 +1,12 @@
+node_modules
+.env
+.git
+database.json
+package-lock.json
+README.md
+.agent
+.gemini
+brain
+task.md
+implementation_plan.md
+walkthrough.md

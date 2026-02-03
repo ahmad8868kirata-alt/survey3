@@ -185,7 +185,8 @@
 
             .open-question textarea {
                 min-height: 70px;
-                font-size: 16px; /* Prevents zoom on iOS */
+                font-size: 16px;
+                /* Prevents zoom on iOS */
             }
 
             .submit-btn {
@@ -602,6 +603,7 @@
                         <input type="text" id="station_name" name="اسم المحطة" class="input-line" style="width:180px;"
                             required>
                     </div>
+
                     <div style="margin-bottom:10px;">
                         <label for="branch_name">اسم الفرع:</label>
                         <input type="text" id="branch_name" name="اسم الفرع" class="input-line" style="width:180px;"
@@ -674,7 +676,7 @@
                     </div>
                 </div>
                 <div class="open-question">
-                    <label>هل يتم اعطائك فرصة لتصحيح خطائك؟</label>
+                    <label>هل يتم أعطاؤك فرصة لتصحيح خطئك؟</label>
                     <div class="radio-group">
                         <input type="radio" id="correct_mistake_yes" name="فرصة لتصحيح الخطأ؟" value="نعم">
                         <label for="correct_mistake_yes" style="font-weight:400">نعم</label>
@@ -692,7 +694,7 @@
                     </div>
                 </div>
                 <div class="open-question">
-                    <label>هل تشعر بالتقدير على عملك؟</label>
+                    <label>هل تشعر بالتقدير والثناء في عملك؟</label>
                     <div class="radio-group">
                         <input type="radio" id="feel_appreciated_yes" name="الشعور بالتقدير؟" value="نعم">
                         <label for="feel_appreciated_yes" style="font-weight:400">نعم</label>
@@ -701,7 +703,7 @@
                     </div>
                 </div>
                 <div class="open-question">
-                    <label>هل تشعر بالأستقرار الوظيفي؟</label>
+                    <label>هل تشعر بالاستقرار الوظيفي؟</label>
                     <div class="radio-group">
                         <input type="radio" id="job_stability_yes" name="الاستقرار الوظيفي؟" value="نعم">
                         <label for="job_stability_yes" style="font-weight:400">نعم</label>
@@ -717,7 +719,7 @@
                 </div>
                 <div class="open-question">
                     <label for="q_env_help">
-                        هل ترى أن بيئة العمل تساعد على الالتزام والنزاهة؟
+                        هل تشعر انك في بيئة العمل تساعد على الالتزام والامانة؟
                     </label>
                     <div class="radio-group">
                         <input type="radio" id="env_yes" name="بيئة العمل والنزاهة؟" value="نعم">
@@ -746,7 +748,7 @@
                 </div>
                 <div class="open-question">
                     <label for="q_recommend">
-                        هل تنصح بالعمل في المحطة لغيرك؟
+                        هل تنصح حضرتك بالعمل في المحطة؟
                     </label>
                     <div class="radio-group">
                         <input type="radio" id="recommend_yes" name="هل تنصح بالعمل في المحطة؟" value="نعم">
@@ -755,6 +757,24 @@
                         <label for="recommend_no" style="font-weight:400">لا</label>
                     </div>
                     <textarea id="recommend_why" name="سبب النصيحة أو عدمها" placeholder="السبب"></textarea>
+                </div>
+
+                <div class="open-question">
+                    <label>كيف تقيم نفسك بالتعامل مع الزبون السيئ:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="disciplined" name="تقييم التعامل مع الزبون السيئ" value="منضبط"
+                            required>
+                        <label for="disciplined" style="font-weight:400">منضبط</label>
+                        <input type="radio" id="undisciplined" name="تقييم التعامل مع الزبون السيئ" value="غير منضبط">
+                        <label for="undisciplined" style="font-weight:400">غير منضبط</label>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="customer_score_percent"
+                            style="display: inline-block; min-width: auto; margin-left: 10px;">النسبة المئوية
+                            لتقييمك:</label>
+                        <input type="number" id="customer_score_percent" name="نسبة تقييم التعامل مع الزبون السيئ"
+                            class="input-line" style="width: 80px;" min="0" max="100" placeholder="%">
+                    </div>
                 </div>
 
                 <div class="open-question">

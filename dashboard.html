@@ -438,7 +438,7 @@
                 padding: 12px 16px;
             }
 
-            .header > div:first-child {
+            .header>div:first-child {
                 justify-content: center;
             }
 
@@ -448,7 +448,7 @@
                 line-height: 1.4;
             }
 
-            .header > div:last-child {
+            .header>div:last-child {
                 justify-content: center;
                 flex-wrap: wrap;
                 gap: 8px;
@@ -520,7 +520,8 @@
                 min-width: 700px;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 10px 12px;
                 max-width: 180px;
             }
@@ -562,7 +563,8 @@
                 font-size: 0.75em;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 8px 10px;
             }
         }
@@ -573,12 +575,16 @@
 
     <div class="header">
         <div style="display:flex; align-items:center; gap:15px;">
-            <h1><i class="fa-solid fa-chart-pie"></i> <span data-i18n="headerTitle">Tayeba Company Survey Dashboard - Follow-up and Control Department</span>
+            <h1><i class="fa-solid fa-chart-pie"></i> <span data-i18n="headerTitle">Tayeba Company Survey Dashboard -
+                    Follow-up and Control Department</span>
             </h1>
         </div>
         <div style="display:flex; align-items:center;">
             <span id="updateTime" style="font-size:0.9em; opacity:0.9;"></span>
             <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">العربية</button>
+            <a href="/api/logout" class="lang-btn"
+                style="text-decoration: none; background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4);"><i
+                    class="fa-solid fa-sign-out-alt"></i> <span data-i18n="btnLogout">Logout</span></a>
         </div>
     </div>
 
@@ -678,6 +684,7 @@
                 confirmDelete: "Are you sure you want to delete this record? This cannot be undone.",
                 deleteSuccess: "Record deleted successfully.",
                 deleteFail: "Failed to delete record. Ensure server is running.",
+                btnLogout: "Logout",
             },
             ar: {
                 pageTitle: "لوحة تحكم استبيانات شركة طيبة قسم المتابعة والرقابة",
@@ -702,6 +709,7 @@
                 confirmDelete: "هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
                 deleteSuccess: "تم حذف السجل بنجاح.",
                 deleteFail: "فشل حذف السجل. تأكد من تشغيل السيرفر.",
+                btnLogout: "تسجيل الخروج",
             }
         };
 

@@ -170,7 +170,8 @@
 
             .open-question textarea {
                 min-height: 70px;
-                font-size: 16px; /* Prevents zoom on iOS */
+                font-size: 16px;
+                /* Prevents zoom on iOS */
             }
 
             .submit-btn {
@@ -534,6 +535,11 @@
                         جميع الإجابات سرية ولن تُستخدم ضدك أو ضد محطتك بأي شكل من الأشكال.</div>
                 </div>
                 <div class="basic-info">
+                    <div style="margin-bottom:10px;">
+                        <label for="supervisor_name">اسم المشرف:</label>
+                        <input type="text" id="supervisor_name" name="اسم المشرف" class="input-line"
+                            style="width:200px;" required>
+                    </div>
                     <div>
                         <label for="branch_name">اسم الفرع:</label>
                         <input type="text" id="branch_name" name="اسم الفرع" class="input-line" style="width:200px;"
@@ -546,6 +552,14 @@
                     </div>
                 </div>
                 <!-- بداية الأسئلة المفتوحة (بصيغ مفتوحة ومحايدة) -->
+                <div class="open-question">
+                    <label>كيف تقيم أسلوب التواصل بينك وبين مشرف القاطع؟</label>
+                    <textarea name="تقييم أسلوب التواصل"></textarea>
+                </div>
+                <div class="open-question">
+                    <label>هل طريقة التواصل سلسة وواضحة؟</label>
+                    <textarea name="سلاسة ووضوح التواصل"></textarea>
+                </div>
                 <div class="open-question">
                     <label for="q1">
                         1. كيف تقيّم أسلوب تواصل مشرف القاطع معك كمدير محطة؟ هل هو واضح ومحترم وفي الوقت المناسب؟ اذكر

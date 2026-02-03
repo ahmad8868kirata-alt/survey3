@@ -5,6 +5,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -42,7 +43,48 @@ app.use(
 );
 app.use(express.json({ limit: '250kb' }));
 app.use(express.urlencoded({ extended: true, limit: '250kb' }));
+app.use(cookieParser());
+
+// Authentication Middleware
+const PROTECTED_PAGES = ['/', '/index.html', '/dashboard.html'];
+const authMiddleware = (req, res, next) => {
+  // If it's a protected page, check for auth cookie
+  if (PROTECTED_PAGES.includes(req.path)) {
+    if (req.cookies.auth === 'true') {
+      return next();
+    } else {
+      return res.redirect('/login.html');
+    }
+  }
+  // If it's an API call to surveys, check for auth cookie
+  if (req.path.startsWith('/api/surveys') || (req.path.startsWith('/api/survey') && req.method === 'DELETE')) {
+    if (req.cookies.auth === 'true') {
+      return next();
+    } else {
+      return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+    }
+  }
+  next();
+};
+
+app.use(authMiddleware);
 app.use(express.static(__dirname));
+
+// Login Endpoint
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && password === 'Admin@2000') {
+    res.cookie('auth', 'true', { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
+    return res.json({ status: 'success' });
+  }
+  res.status(401).json({ status: 'error', message: 'Invalid credentials' });
+});
+
+// Logout Endpoint
+app.get('/api/logout', (req, res) => {
+  res.clearCookie('auth');
+  res.redirect('/login.html');
+});
 
 function redactEmailAddress(email) {
   if (!email || typeof email !== 'string') return '';
@@ -269,3 +311,5 @@ app.listen(PORT, () => {
   );
   console.log(`=========================================`);
 });
+
+module.exports = app;
