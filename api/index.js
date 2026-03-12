@@ -62,9 +62,10 @@ const authMiddleware = (req, res, next) => {
 app.use(authMiddleware);
 app.use(express.static(PUBLIC_DIR));
 
-// Explicitly serve Arabic files to avoid encoding issues on Vercel
+// Explicitly serve Arabic files to avoid encoding issues
 app.get(['/استبيان عمال.html', '/استبيان%20عمال.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'استبيان عمال.html')));
 app.get(['/استبيان مدراء.html', '/استبيان%20مدراء.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'استبيان مدراء.html')));
+app.get(['/استبيان مشرفي القاطع.html', '/استبيان%20مشرفي%20القاطع.html'], (req, res) => res.sendFile(path.join(PUBLIC_DIR, 'استبيان مشرفي القاطع.html')));
 
 // Specific routes for protected views
 app.get('/index.html', (req, res) => res.sendFile(path.join(VIEWS_DIR, 'index.html')));
@@ -192,7 +193,8 @@ app.get('/health', (_req, res) => {
 app.get('/api/surveys', (_req, res) => {
   const managers = db.getAllManagers();
   const workers = db.getAllWorkers();
-  res.json({ managers, workers });
+  const supervisors = db.getAllSupervisors();
+  res.json({ managers, workers, supervisors });
 });
 
 app.post('/api/save-survey', (req, res) => {
@@ -213,6 +215,8 @@ app.post('/api/save-survey', (req, res) => {
       db.addManager(entry);
     } else if (type === 'worker') {
       db.addWorker(entry);
+    } else if (type === 'supervisor') {
+      db.addSupervisor(entry);
     } else {
       return res.status(400).json({ status: 'error', message: 'Invalid survey type' });
     }
@@ -233,6 +237,8 @@ app.delete('/api/survey/:type/:id', (req, res) => {
       deleted = db.deleteManager(id);
     } else if (type === 'worker') {
       deleted = db.deleteWorker(id);
+    } else if (type === 'supervisor') {
+      deleted = db.deleteSupervisor(id);
     } else {
       return res.status(400).json({ status: 'error', message: 'Invalid type' });
     }

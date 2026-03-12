@@ -29,10 +29,20 @@ function initDatabase() {
     )
   `);
   
+  // Create supervisors table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supervisors (
+      id TEXT PRIMARY KEY,
+      receivedAt TEXT NOT NULL,
+      data TEXT NOT NULL
+    )
+  `);
+
   // Create indexes for faster queries
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_managers_receivedAt ON managers(receivedAt);
     CREATE INDEX IF NOT EXISTS idx_workers_receivedAt ON workers(receivedAt);
+    CREATE INDEX IF NOT EXISTS idx_supervisors_receivedAt ON supervisors(receivedAt);
   `);
   
   console.log('SQLite database initialized at:', DB_PATH);
@@ -178,7 +188,39 @@ const dbOperations = {
     const result = deleteStmt.run(id);
     return result.changes > 0;
   },
-  
+
+  // Get all supervisors
+  getAllSupervisors() {
+    const db = getDB();
+    const rows = db.prepare('SELECT * FROM supervisors ORDER BY receivedAt DESC').all();
+    return rows.map(row => ({
+      id: row.id,
+      receivedAt: row.receivedAt,
+      ...JSON.parse(row.data)
+    }));
+  },
+
+  // Add a supervisor survey
+  addSupervisor(entry) {
+    const db = getDB();
+    const { id, receivedAt, ...data } = entry;
+    const insert = db.prepare('INSERT INTO supervisors (id, receivedAt, data) VALUES (?, ?, ?)');
+    insert.run(
+      id || Date.now().toString() + Math.random().toString(36).slice(2),
+      receivedAt || new Date().toISOString(),
+      JSON.stringify(data)
+    );
+    return id || Date.now().toString() + Math.random().toString(36).slice(2);
+  },
+
+  // Delete a supervisor survey
+  deleteSupervisor(id) {
+    const db = getDB();
+    const deleteStmt = db.prepare('DELETE FROM supervisors WHERE id = ?');
+    const result = deleteStmt.run(id);
+    return result.changes > 0;
+  },
+
   // Get a manager by ID
   getManagerById(id) {
     const db = getDB();

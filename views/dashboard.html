@@ -594,6 +594,7 @@
                 <button class="tab-btn active" onclick="switchTab('workers')" data-i18n="tabWorkers">Workers
                     Survey</button>
                 <button class="tab-btn" onclick="switchTab('managers')" data-i18n="tabManagers">Managers Survey</button>
+                <button class="tab-btn" onclick="switchTab('supervisors')" data-i18n="tabSupervisors">Supervisors Survey</button>
             </div>
 
             <div class="controls">
@@ -652,7 +653,7 @@
     </div>
 
     <script>
-        let allData = { workers: [], managers: [] };
+        let allData = { workers: [], managers: [], supervisors: [] };
         let currentTab = 'workers';
         let currentSort = { col: null, asc: true };
         let activeFilters = {};
@@ -685,6 +686,7 @@
                 deleteSuccess: "Record deleted successfully.",
                 deleteFail: "Failed to delete record. Ensure server is running.",
                 btnLogout: "Logout",
+                tabSupervisors: "Supervisors Survey",
             },
             ar: {
                 pageTitle: "لوحة تحكم استبيانات شركة طيبة قسم المتابعة والرقابة",
@@ -710,6 +712,7 @@
                 deleteSuccess: "تم حذف السجل بنجاح.",
                 deleteFail: "فشل حذف السجل. تأكد من تشغيل السيرفر.",
                 btnLogout: "تسجيل الخروج",
+                tabSupervisors: "استبيان مشرفي القاطع",
             }
         };
 
@@ -978,7 +981,7 @@
         async function deleteRecord(id) {
             const t = TRANSLATIONS[currentLang];
             if (!confirm(t.confirmDelete)) return;
-            const typeParam = currentTab === 'workers' ? 'worker' : 'manager';
+            const typeParam = currentTab === 'workers' ? 'worker' : currentTab === 'managers' ? 'manager' : 'supervisor';
             try {
                 const res = await fetch(`/api/survey/${typeParam}/${id}`, { method: 'DELETE' });
                 if (res.status === 404) {
@@ -1127,7 +1130,7 @@
             const wsData = [headerLabels, ...rows];
             const ws = XLSX.utils.aoa_to_sheet(wsData);
             const wb = XLSX.utils.book_new();
-            const tabName = currentTab === 'workers' ? 'Workers' : 'Managers';
+            const tabName = currentTab === 'workers' ? 'Workers' : currentTab === 'managers' ? 'Managers' : 'Supervisors';
             XLSX.utils.book_append_sheet(wb, ws, tabName);
             const fileName = `survey-${currentTab}-${new Date().toISOString().slice(0, 10)}.xlsx`;
             XLSX.writeFile(wb, fileName);
