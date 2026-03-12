@@ -2,11 +2,7 @@ const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
-// Handle DB path for Vercel (must use /tmp for write access)
-const IS_VERCEL = process.env.VERCEL === '1';
-const DB_PATH = IS_VERCEL
-  ? path.join('/tmp', 'survey.db')
-  : path.join(__dirname, 'survey.db');
+const DB_PATH = path.join(__dirname, 'survey.db');
 
 // Initialize database
 function initDatabase() {

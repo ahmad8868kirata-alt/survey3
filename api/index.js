@@ -8,7 +8,8 @@ const cookieParser = require('cookie-parser');
 const db = require('./database');
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // Unique secret for this server instance (resets on restart)
 const SESSION_SECRET = Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -310,10 +311,10 @@ app.get(/^(?!\/api|\/send-email).*/, (req, res) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => {
+  app.listen(PORT, HOST, () => {
     console.log(`=========================================`);
     console.log(`🚀 SERVER RUNNING`);
-    console.log(`🌍 URL: http://localhost:${PORT}`);
+    console.log(`🌍 URL: http://${HOST}:${PORT}`);
     console.log(`📪 Receiver (MAIL_TO): ${process.env.MAIL_TO ? redactEmailAddress(process.env.MAIL_TO) : '(not set)'}`);
     console.log(
       `✉️  SMTP (SMTP_USER): ${process.env.SMTP_USER ? redactEmailAddress(process.env.SMTP_USER) : '(not set)'}`,
